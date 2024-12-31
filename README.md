@@ -1,117 +1,17 @@
-# PythonCodeRepo
-#Text Adventure Game in KN-Lang by using Python
-class Adventurer:
-    def __init__(self, username):
-        self.username = username
-        self.backpack = []
-        self.current_area = None
+This Python project is a text-based adventure game where players can explore different areas, pick up objects, and carry them in their backpack. The game is designed to be a fun and engaging way to experience a fictional world through interactive storytelling.
 
-    def move_to(self, new_area):
-        self.current_area = new_area
-        print(f"You have moved to the {new_area.area_name}.")
+Features
+Adventurer Class: Represents the player character who can move between areas, pick up objects, and display the contents of their backpack.
 
-    def pick_up(self, obj):
-        self.backpack.append(obj)
-        print(f"You have picked up a {obj}.")
+Area Class: Represents different locations in the game. Each area can have objects and connections to other areas, allowing for navigation.
 
-    def display_backpack(self):
-        if not self.backpack:
-            print("Your backpack contains: Nothing!")
-        else:
-            print(f"Your backpack contains: {', '.join(self.backpack)}")
+AdventureEngine Class: Manages the setup and progression of the game, including creating areas, connecting them, and running the main game loop.
 
+Game Mechanics
+Movement: Players can navigate through different areas using simple commands like go north, go south, etc.
 
-class Area:
-    def __init__(self, area_name, area_description):
-        self.area_name = area_name
-        self.area_description = area_description
-        self.area_objects = []
-        self.connected_areas = {}
+Object Interaction: Players can pick up objects found in different areas and store them in their backpack.
 
-    def place_object(self, obj):
-        self.area_objects.append(obj)
+Area Description: Each area provides a description that helps players visualize their surroundings and discover available objects.
 
-    def connect_area(self, direction, area):
-        self.connected_areas[direction] = area
-
-    def describe(self):
-        print(f"\n{self.area_name}")
-        print(self.area_description)
-        if not self.area_objects:
-            print("No objects available.")
-        else:
-            print(f"Objects available: {', '.join(self.area_objects)}")
-
-    def get_connected_area(self, direction):
-        return self.connected_areas.get(direction)
-
-
-class AdventureEngine:
-    def __init__(self):
-        self.areas = {}
-        self.adventurer = None
-
-    def setup_game(self):
-        entrance_area = Area("Entrance Hall", "A spacious hall with an eerie quiet and a faint draft.")
-        reading_room = Area("Reading Room", "A tranquil room filled with dusty books and a lingering smell of parchment.")
-        underground_room = Area("Underground Chamber", "A gloomy, damp chamber with the sound of water dripping.")
-        treasure_room = Area("Treasure Room", "A glittering vault filled with gold coins and precious stones.")
-
-        entrance_area.place_object("Torch")
-        reading_room.place_object("Scroll")
-        underground_room.place_object("Flare")
-
-        entrance_area.connect_area("north", reading_room)
-        reading_room.connect_area("south", entrance_area)
-        reading_room.connect_area("east", underground_room)
-        underground_room.connect_area("west", reading_room)
-        underground_room.connect_area("north", treasure_room)
-
-        self.areas["Entrance Hall"] = entrance_area
-        self.areas["Reading Room"] = reading_room
-        self.areas["Underground Chamber"] = underground_room
-        self.areas["Treasure Room"] = treasure_room
-
-        adventurer_name = input("Welcome to the Adventure Game! What is your name?\n") or "Adventurer"
-        self.adventurer = Adventurer(adventurer_name)
-        self.adventurer.current_area = entrance_area
-
-        print(f"Hello {adventurer_name}! Your adventure begins in the Entrance Hall.")
-
-    def begin_adventure(self):
-        while True:
-            current_area = self.adventurer.current_area
-            if not current_area:
-                break
-
-            current_area.describe()
-
-            user_input = input("Enter a command (go [direction], pick up [object], backpack, quit): ").strip().lower()
-
-            if user_input.startswith("go "):
-                direction = user_input[3:].strip()
-                next_area = current_area.get_connected_area(direction)
-                if next_area:
-                    self.adventurer.move_to(next_area)
-                else:
-                    print("You can't go in that direction!")
-            elif user_input.startswith("pick up "):
-                obj = user_input[8:].strip()
-                if obj in current_area.area_objects:
-                    current_area.area_objects.remove(obj)
-                    self.adventurer.pick_up(obj)
-                else:
-                    print(f"There is no {obj} to pick up here.")
-            elif user_input == "backpack":
-                self.adventurer.display_backpack()
-            elif user_input == "quit":
-                print("Thanks for playing! Farewell!")
-                break
-            else:
-                print("Invalid command! Please try again.")
-
-
-if __name__ == "__main__":
-    adventure = AdventureEngine()
-    adventure.setup_game()
-    adventure.begin_adventure()
+Game Loop: The main game loop handles player input, area descriptions, and game commands until the player decides to quit.
